@@ -18,13 +18,20 @@
             overflow: hidden;
         }
 
+        #lyrics-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
         #lyrics {
             font-size: 24px;
             text-align: left;
             white-space: pre-line;
             overflow-y: auto;
-            max-height: 80vh;
-            width: 90%;
             line-height: 1.5;
         }
 
@@ -54,28 +61,23 @@
         .heart {
             font-size: 28px;
             color: red;
-            white-space: pre-wrap;  /* Allow the heart to wrap correctly */
+            white-space: pre-wrap;
             display: inline-block;
             opacity: 0;
             margin-top: 20px;
         }
 
         .sorry-message {
-            font-size: 24px;
-            color: white;
-            margin-left: 20px;
-            display: inline-block;
-            opacity: 0;
+            display: none;
         }
     </style>
 </head>
 <body>
-
-    <div id="lyrics">
-        <!-- Lyrics will go here -->
+    <div id="lyrics-container">
+        <div id="lyrics"></div>
+        <div class="heart"></div>
     </div>
 
-    <!-- Play button -->
     <button id="playButton">Start Song</button>
 
     <audio id="audio">
@@ -85,74 +87,67 @@
 
     <script>
         const lyrics = [
-            { time: 122, text: "It's stuck with you forever" },  // 2:01
-            { time: 125, text: "So promise you won't let it go" },  // 2:05
-            { time: 128, text: "I'll trust the universe will always bring me to you" },  // 2:09
-            { time: 137, text: "I'll imagine we fell in love" },  // 2:17
-            { time: 140, text: "I'll nap under moonlight skies with you" },  // 2:20
-            { time: 144, text: "I think I'll picture us, you with the waves" },  // 2:24
-            { time: 148, text: "The ocean's colors on your face" },  // 2:28
-            { time: 151, text: "I'll leave my heart with your air" },  // 2:33
-            { time: 155, text: "So let me fly with you" },  // 2:38
-            { time: 158, text: "Will you be forever with me" }  // 2:43
+            { time: 122, text: "It's stuck with you forever" },
+            { time: 125, text: "So promise you won't let it go" },
+            { time: 128, text: "I'll trust the universe will always bring me to you" },
+            { time: 137, text: "I'll imagine we fell in love" },
+            { time: 140, text: "I'll nap under moonlight skies with you" },
+            { time: 144, text: "I think I'll picture us, you with the waves" },
+            { time: 148, text: "The ocean's colors on your face" },
+            { time: 151, text: "I'll leave my heart with your air" },
+            { time: 155, text: "So let me fly with you" },
+            { time: 158, text: "Will you be forever with me" }
         ];
 
         const lyricsElement = document.getElementById("lyrics");
         const audioElement = document.getElementById("audio");
         const playButton = document.getElementById("playButton");
+        const heartElement = document.querySelector(".heart");
+        const sorryMessageElement = document.querySelector(".sorry-message");
 
         let currentIndex = 0;
 
-        // Function to update the lyrics with typing animation
         function updateLyrics() {
             const currentTime = audioElement.currentTime;
 
             if (currentIndex < lyrics.length && currentTime >= lyrics[currentIndex].time) {
                 const lyricText = lyrics[currentIndex].text;
-                createTypedLyric(lyricText); // Call function to type the lyric out
-
+                createTypedLyric(lyricText);
                 currentIndex++;
             }
 
-            // Once the last lyric is displayed, show heart and "sorry..." immediately
             if (currentIndex === lyrics.length) {
                 displayHeartAndMessage();
             }
         }
 
-        // Function to create the typing animation for lyrics
         function createTypedLyric(text) {
             const lyricElement = document.createElement("div");
             lyricElement.classList.add("highlight");
-            lyricsElement.appendChild(lyricElement);  // Add empty lyric div to the page
+            lyricsElement.appendChild(lyricElement);
 
             let currentCharIndex = 0;
             const typingInterval = setInterval(() => {
                 lyricElement.textContent = text.slice(0, currentCharIndex + 1);
                 currentCharIndex++;
 
-                // Stop the typing animation when all characters are typed
                 if (currentCharIndex === text.length) {
                     clearInterval(typingInterval);
                 }
-            }, 90);  // Adjust typing speed (in milliseconds) here
+            }, 90);
         }
 
-        // Listen for audio updates
         audioElement.addEventListener("timeupdate", updateLyrics);
 
-        // Start song when the user clicks the button
         playButton.addEventListener("click", function() {
-            audioElement.currentTime = 121;  // Start at 2:01 (121 seconds)
-            audioElement.play();             // Play the song
-            playButton.style.display = "none";  // Hide the button after clicking
+            audioElement.currentTime = 121;
+            audioElement.play();
+            playButton.style.display = "none";
         });
 
-        // Function to create the heart shape text and animate it
         function displayHeartAndMessage() {
-            const heartText = `       
-
-             ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣾⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣤⠶⣆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+            const heartText = `
+                         ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣾⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣤⠶⣆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣾⠉⢻⣆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡾⠉⠀⢻⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢰⠏⡠⡀⠹⣶⠀⠀⠀⠀⠀⠀⠀⠀⠀⣴⠟⠀⠄⡀⠈⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡿⠆⡇⠰⠀⠈⠻⠦⠶⠶⠶⠶⠾⠶⠞⠋⠀⡌⠀⡇⠀⣿⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -167,7 +162,7 @@
 ⠀⠀⠘⢞⣷⠃⠀⠀⠀⠀⠀⠀⠀⠙⢿⡷⠴⢴⡤⢦⠤⡤⠤⠤⠶⠶⠚⠛⠉⠀⠀⢨⣿⣦⣀⢀⣠⣤⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⡀⡀⠀⠀⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡴⠴⢖⡶⡿⡈⡹⡑⢢⠌⣪⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⢻⡉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢈⡿⠀⠀⠀⠀⠀⠀⠀⠀⠐⢼⣦⣷⠱⢌⡒⡌⡝⣜⠣⣑⠅⠎⠇⣳⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⣾⠛⠻⢷⣤⠀⠀⠀⠀⠀⣿⠀⠀⠀⠀⠀⠘⢷⣄⠀⠀⠉⣿⡐⠢⡔⡘⡡⢇⡡⢅⢡⡙⣬⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⣾⠛⠻⢷⣤⠀⠀⠀⠀⠀⣿⠀⠀⠀⠀⠀⠘⢷⣄⠀⠀⠉⣿⡐⠢⡔⡘SORRY⡹⡙⣬⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⢹⣆⡀⠀⢻⣧⠀⠀⠀⠀⢿⡄⠀⠀⠀⠀⠀⠀⠙⠻⣶⣤⡿⠙⢧⣆⠵⡁⠦⠇⡪⢠⣜⡟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠙⢿⣦⠀⠹⢾⣀⡀⠀⢹⡏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠳⡾⣅⡎⢆⣇⡞⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠹⣷⠀⠀⠉⠛⠛⢾⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⡇⠛⠻⠞⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -176,44 +171,22 @@
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⠄⠀⠀⠀⣤⠶⠓⠋⠉⠁⠀⢈⣿⠀⠀⢼⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢿⡆⠀⠀⠸⣿⠁⠀⠀⠀⠀⠀⠨⢿⣀⣀⡿⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⢷⣄⣀⣰⠟⠀⠀⠀⠀⠀⠀⠀⠈⠉⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-`;  // Corrected heart text formatting (removed center line)
-        
-            // Ensure the heart is only displayed once after the last lyric
-            if (!document.querySelector('.heart')) {  // Check if the heart is already added
-                const heart = document.createElement("div");
-                heart.classList.add("heart");
-                heart.textContent = heartText;  // The heart shape as text
-                lyricsElement.appendChild(heart);  // Add heart to the page
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+            `;
 
-                const sorryMessage = document.createElement("div");
-                sorryMessage.classList.add("sorry-message");
-                sorryMessage.textContent = "  sorry...";  // The 'sorry' message
-                lyricsElement.appendChild(sorryMessage);  // Add sorry message
+            if (!heartElement.textContent) {
+                heartElement.textContent = heartText;
 
-                // Animate the heart and message
                 let heartIndex = 0;
-                let messageIndex = 0;
-
-                // Heart typing animation
                 const heartInterval = setInterval(() => {
-                    heart.textContent = heartText.slice(0, heartIndex + 1);
+                    heartElement.textContent = heartText.slice(0, heartIndex + 1);
                     heartIndex++;
                     if (heartIndex === heartText.length) clearInterval(heartInterval);
-                }, 10);  // Slightly faster typing effect for heart
+                }, 10);
 
-                // Sorry message typing animation
-                const messageInterval = setInterval(() => {
-                    sorryMessage.textContent = " sorry...".slice(0, messageIndex + 1);
-                    messageIndex++;
-                    if (messageIndex === " sorry...".length) clearInterval(messageInterval);
-                }, 300);  // Slow typing effect for the "sorry..." message
-
-                // Fade in the heart and message after typing
                 setTimeout(() => {
-                    heart.style.opacity = 1;
-                    sorryMessage.style.opacity = 1;
-                }, 100);  // Immediately show heart after the last lyric
+                    heartElement.style.opacity = 1;
+                }, 100);
             }
         }
 
@@ -222,10 +195,9 @@
                 const commandLineMessage = 'Starting song lyrics sync...';
                 const commandLineElement = document.createElement('div');
                 commandLineElement.textContent = `> ${commandLineMessage}`;
-                lyricsElement.appendChild(commandLineElement);  // Show initial message
+                lyricsElement.appendChild(commandLineElement);
             }, 1000);
         };
     </script>
-
 </body>
 </html>
